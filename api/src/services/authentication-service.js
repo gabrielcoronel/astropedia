@@ -62,7 +62,7 @@ const signUp = async (req, res) => {
     const account = req.body;
 
     if (await isUsernameTaken(account.username)) {
-        res.status(400).send("Username is already taken");
+        res.status(400).send("USERNAME_TAKEN");
         return;
     }
 
@@ -77,7 +77,7 @@ const logIn = async (req, res) => {
     const credentials = req.body;
 
     if (!(await areCredentialsValid(credentials))) {
-        res.status(400).send("Credentials are invalid");
+        res.status(400).send("INVALID_CREDENTIALS");
         return;
     }
 
