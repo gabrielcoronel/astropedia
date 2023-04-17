@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
+    username: String,
     title: String,
     description: String,
     pictures: [String],

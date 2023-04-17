@@ -6,11 +6,11 @@ const cors = require("cors");
 require("dotenv").config();
 
 const PORT = Number(process.env.PORT);
-const CONNECTION_URI = process.env.MONGO_CONNECTION_URI
+const CONNECTION_URI = process.env.MONGODB_CONNECTION_URI
 const api = express();
 
-const authenticationRouter = require("./slices/authentication-slice");
-const eventsRouter = require("./slices/events-slice");
+const authenticationRouter = require("./services/authentication-service");
+const eventsRouter = require("./services/events-service");
 
 api.use(bodyParser.json({ limit: "50mb" }));
 api.use(morgan("tiny"));
@@ -20,6 +20,6 @@ api.use("/events", eventsRouter);
 
 mongoose.connect(CONNECTION_URI)
     .then(() => console.log("Connected to MongoDB Atlas"))
-    .catch(() => console.log("Could not connecto MongoDB Atlas"));
+    .catch(() => console.log("Could not connect to MongoDB Atlas"));
 
 api.listen(PORT, () => console.log(`Listening on port ${PORT}`));

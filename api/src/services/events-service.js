@@ -1,34 +1,34 @@
 const express = require("express");
-const usersRepository = require("../repositories/users-repository");
-const validateSessionMiddleware = require("../utilities/validate-session-middleware");
+const eventsRepository = require("../repositories/events-repository");
+const validateSessionMiddleware = require("../middleware/validate-session");
 
 const router = express.Router();
 
 const getUserEvents = async (username) => {
-    const events = await usersRepository.find({ username });
+    const events = await eventsRepository.find({ username });
 
     return events;
 };
 
 const getEventById = async (id) => {
-    const event = await usersRepository.findById(id);
+    const event = await eventsRepository.findById(id);
 
     return event;
 };
 
 const storeEvent = async (username, event) => {
-    await usersRepository.create({
+    await eventsRepository.create({
         ...event,
         username
     });
 };
 
 const updateEvent = async (id, event) => {
-    await usersRepository.updateOne({ _id: id }, { $set: event });
+    await eventsRepository.updateOne({ _id: id }, { $set: event });
 };
 
 const deleteEvent = async (id) => {
-    await usersRepository.deleteOne(({ _id: id }));
+    await eventsRepository.deleteOne(({ _id: id }));
 };
 
 router.use(validateSessionMiddleware);
@@ -53,6 +53,7 @@ router.post("/storeEvent", (req, res) => {
     const { username, ...event } = req.body;
 
     storeEvent(username, event)
+        .then(() => res.sendStatus(200))
         .catch((error) => res.status(400).send(error));
 });
 
@@ -60,6 +61,7 @@ router.put("/updateEvent", (req, res) => {
     const { id, ...event } = req.body;
 
     updateEvent(id, event)
+        .then(() => res.sendStatus(200))
         .catch((error) => res.status(400).send(error));
 });
 
@@ -67,6 +69,7 @@ router.delete("/deleteEvent", (req, res) => {
     const { id } = req.body;
 
     deleteEvent(id)
+        .then(() => res.sendStatus(200))
         .catch((error) => res.status(400).send(error));
 });
 

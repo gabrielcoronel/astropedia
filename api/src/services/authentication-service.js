@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const usersRepository = require("../repositories/users-repository");
 const sessionsRepository = require("../repositories/sessions-repository");
+const makeErrorHandler = require("../utilities/make-error-handler");
 
 const router = express.Router();
 
@@ -57,7 +58,7 @@ const createSession = async (username) => {
     return session;
 };
 
-router.post("/signUp", async (req, res) => {
+const signUp = async (req, res) => {
     const account = req.body;
 
     if (await isUsernameTaken(account.username)) {
@@ -70,9 +71,9 @@ router.post("/signUp", async (req, res) => {
     const session = await createSession(account.username);
 
     res.json(session);
-});
+};
 
-router.post("/logIn", async (req, res) => {
+const logIn = async (req, res) => {
     const credentials = req.body;
 
     if (!(await areCredentialsValid(credentials))) {
@@ -83,6 +84,10 @@ router.post("/logIn", async (req, res) => {
     const session = await createSession(credentials.username);
 
     res.json(session);
-});
+};
+
+router.post("/signUp", makeErrorHandler(signUp));
+
+router.post("/logIn", makeErrorHandler(logIn));
 
 module.exports = router;
