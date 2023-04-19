@@ -4,6 +4,7 @@ import { DateCalendar } from "@mui/x-date-pickers";
 import { useForm } from "@mantine/form";
 import PictureCollectionInput from "../../components/PictureCollectionInput";
 import useTrackedMutation from "../../hooks/useTrackedMutation";
+import { useQueryClient } from "react-query";
 import axios from "axios";
 import formatApiUrl from "../../utilities/format-api-url";
 
@@ -14,10 +15,8 @@ const layouts = {
         justifyContent: "space-evenly",
         alignItems: "center",
         width: "55%",
-
         padding: "1.5rem",
-        border: "1px silver solid",
-        borderRadius: "15px"
+        backgroundColor: "white"
     },
     inputs: {
         display: "flex",
@@ -51,8 +50,9 @@ const layouts = {
 
 const storeEvent = (event) => {
     const authenticationToken = localStorage.getItem("token");
+    const username = localStorage.getItem("username");
     const url = formatApiUrl("/events/storeEvent");
-    const promise = axios.post(url, event, {
+    const promise = axios.post(url, { ...event, username }, {
         headers: {
             Authorization: authenticationToken
         }
@@ -61,7 +61,7 @@ const storeEvent = (event) => {
     return promise;
 };
 
-export default ({ setIsLoading, setRequestError }) => {
+export default ({ onSubmit, setIsLoading, setRequestError }) => {
     const form = useForm({
         initialValues: {
             title: "",
@@ -71,10 +71,13 @@ export default ({ setIsLoading, setRequestError }) => {
         }
     });
     const mutation = useTrackedMutation(storeEvent, setIsLoading, setRequestError);
+    const queryClient = useQueryClient();
 
     const handleSubmit = (values) => {
         mutation.mutate(values);
+        queryClient.refetchQueries();
         form.reset();
+        onSubmit();
     };
 
     return (

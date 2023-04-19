@@ -33,7 +33,7 @@ const deleteEvent = async (id) => {
 
 router.use(validateSessionMiddleware);
 
-router.get("/getUserEvents", async (req, res) => {
+router.post("/getUserEvents", async (req, res) => {
     const { username } = req.body;
 
     getUserEvents(username)
@@ -41,7 +41,7 @@ router.get("/getUserEvents", async (req, res) => {
         .catch((error) => res.status(400).send(error));
 });
 
-router.get("/getEventById", (req, res) => {
+router.post("/getEventById", (req, res) => {
     const { id } = req.body;
 
     getEventById(id)
@@ -57,7 +57,7 @@ router.post("/storeEvent", (req, res) => {
         .catch((error) => res.status(400).send(error));
 });
 
-router.put("/updateEvent", (req, res) => {
+router.post("/updateEvent", (req, res) => {
     const { id, ...event } = req.body;
 
     updateEvent(id, event)
@@ -65,7 +65,7 @@ router.put("/updateEvent", (req, res) => {
         .catch((error) => res.status(400).send(error));
 });
 
-router.delete("/deleteEvent", (req, res) => {
+router.post("/deleteEvent", (req, res) => {
     const { id } = req.body;
 
     deleteEvent(id)

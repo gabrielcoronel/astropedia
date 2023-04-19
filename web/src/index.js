@@ -9,6 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Auth from "./pages/Auth/Auth";
 import EventForm from "./pages/Events/EventForm";
 import { useState } from "react";
+import EventList from "./pages/Events/EventList";
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -42,7 +43,7 @@ root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Test />
+        <EventList />
       </LocalizationProvider>
     </QueryClientProvider>
   </React.StrictMode>
