@@ -4,12 +4,18 @@ import {
     Typography,
     CircularProgress,
     Modal,
+    Card,
+    CardMedia,
+    CardContent,
+    CardActions,
     IconButton
 } from "@mui/material";
-import { Add, Delete } from "@mui/icons-material";
+import { Add, Delete, Logout } from "@mui/icons-material";
+import { useAtom } from "jotai";
+import { sessionDataAtom } from "../../context";
 import formatDate from "../../utilities/format-date";
 import formatApiUrl from "../../utilities/format-api-url";
-import PictureSlider from "../../components/PictureSlider";
+import readSessionData from "../../utilities/read-session-data";
 import EventForm from "./EventForm";
 import useTrackedMutation from "../../hooks/useTrackedMutation";
 import { useQuery } from "react-query";
@@ -36,6 +42,14 @@ const layouts = {
         left: 'auto',
         position: 'fixed',
     },
+    fab2: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 90,
+        left: 'auto',
+        position: 'fixed'
+    },
     horizontal: {
         display: "flex",
         flexDirection: "row",
@@ -60,12 +74,11 @@ const layouts = {
 };
 
 const getUserEvents = async () => {
-    const authenticationToken = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
+    const { username, token } = readSessionData();
     const url = formatApiUrl("/events/getUserEvents");
     const response = await axios.post(url, { username }, {
         headers: {
-            Authorization: authenticationToken
+            Authorization: token
         }
     });
     const data = response.data;
@@ -74,11 +87,11 @@ const getUserEvents = async () => {
 };
 
 const deleteEvent = (id) => {
-    const authenticationToken = localStorage.getItem("token");
+    const { token } = readSessionData();
     const url = formatApiUrl("/events/deleteEvent");
     const promise = axios.post(url, { id }, {
         headers: {
-            Authorization: authenticationToken
+            Authorization: token
         }
     });
 
@@ -96,40 +109,38 @@ const EventTile = ({ setIsLoading, setRequestError, event }) => {
     };
 
     return (
-        <Box sx={layouts.tile}>
-            <Box>
-                <IconButton onClick={() => handleDelete()}>
-                    <Delete />
-                </IconButton>
-            </Box>
+      <Card sx={{ width: "45%" }}>
+        <CardMedia
+          component="img"
+          sx={{ height: "20rem" }}
+          image={pictures[0]}
+        >
+        </CardMedia>
 
+        <CardContent>
             <Typography
                 variant="h5"
-                align="center"
-                color="primary"
             >
                 {title}
             </Typography>
 
             <Typography
                 variant="subtitle2"
-                align="left"
-                sx={{ width: "100%" }}
-                color="primary.dark"
             >
                 {formatDate(date)}
             </Typography>
 
-            <Box sx={layouts.horizontal}>
-                <Typography sx={{ width: "40%" }} align="left">
-                    {description}
-                </Typography>
+          <Typography>
+          {description}
+          </Typography>
+        </CardContent>
 
-                <Box sx={{ width: "40%", height: "8rem"}} >
-                    <PictureSlider pictures={pictures} />
-                </Box>
-            </Box>
-        </Box>
+        <CardActions>
+          <IconButton onClick={() => handleDelete()}>
+            <Delete />
+          </IconButton>
+        </CardActions>
+      </Card>
     );
 };
 
@@ -140,7 +151,6 @@ const EventList = ({ setIsLoading, setRequestError }) => {
         setRequestError(query.error);
         return;
     }
-
 
     return (
         <Box sx={layouts.list}>
@@ -168,6 +178,11 @@ export default () => {
     const [showStoreForm, setShowStoreForm] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [requestError, setRequestError] = useState(null);
+    const [_, setSessionData] = useAtom(sessionDataAtom);
+
+    const logOut = () => {
+      setSessionData(null);
+    };
 
     return (
         <Box>
@@ -185,10 +200,17 @@ export default () => {
                         setIsLoading={setIsLoading}
                         setRequestError={setRequestError}
                         onSubmit={() => setShowStoreForm(false)}
-                    />;
+                    />
                 </div>
             </Modal>
 
+
+            <Fab
+                sx={layouts.fab2}
+                onClick={() => logOut()}
+            >
+                <Logout />
+            </Fab>
 
             <Fab
                 sx={layouts.fab}

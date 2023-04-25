@@ -2,19 +2,23 @@ import { TextField, Button, Box } from "@mui/material";
 import { useForm } from "@mantine/form";
 import axios from "axios";
 import PictureInput from "../../components/PictureInput";
+import { useAtom } from "jotai";
+import { sessionDataAtom } from "../../context";
 import formatApiUrl from "../../utilities/format-api-url";
 import isObjectEmpty from "../../utilities/is-object-empty";
 import useTrackedMutation from "../../hooks/useTrackedMutation";
 import formLayout from "./form-layout";
 
-const signUp = (account) => {
+const signUp = async (account) => {
     const url = formatApiUrl("/authentication/signUp");
-    const promise = axios.post(url, account);
+    const response = await axios.post(url, account);
+    const data = response.data;
 
-    return promise;
+    return data;
 };
 
 export default ({ setIsLoading, setRequestError, setValidationError }) => {
+    const [_, setSessionData] = useAtom(sessionDataAtom);
     const form = useForm({
         initialValues: {
             username: "",
@@ -22,7 +26,6 @@ export default ({ setIsLoading, setRequestError, setValidationError }) => {
             picture: ""
         },
     });
-    const mutation = useTrackedMutation(signUp, setIsLoading, setRequestError);
 
     const handleSubmit = async (values) => {
         if (!isObjectEmpty(form.errors)) {
@@ -33,6 +36,22 @@ export default ({ setIsLoading, setRequestError, setValidationError }) => {
         mutation.mutate(values);
         form.reset();
     }
+
+    const handleSuccess = (data) => {
+      setSessionData({
+        username: data.username,
+        token: data.token,
+      });
+    };
+
+    const mutation = useTrackedMutation(
+      signUp,
+      setIsLoading,
+      setRequestError,
+      {
+        onSuccess: handleSuccess
+      }
+    );
 
     return (
         <Box sx={formLayout}>

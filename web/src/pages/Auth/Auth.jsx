@@ -12,9 +12,6 @@ import { Close } from "@mui/icons-material";
 import LogIn from "./LogIn";
 import SignUp from "./SignUp";
 
-// acomodar
-
-
 const formatErrorMessage = (requestError, validationError) => {
     if (validationError !== null) {
         const message = Object.entries(validationError)[0][1];
@@ -23,9 +20,9 @@ const formatErrorMessage = (requestError, validationError) => {
     } else if (requestError !== null) {
         switch (requestError.response.data) {
             case "INVALID_CREDENTIALS":
-                return "The credentials are invalid"
+                return "Las credenciales son incorrectas"
             case "USERNAME_TAKEN":
-                return "The username is already taken"
+                return "Este nombre de usuario ya existe"
         }
     }
 

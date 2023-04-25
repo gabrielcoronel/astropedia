@@ -1,6 +1,8 @@
 import { TextField, Button, Box } from "@mui/material";
 import { useForm } from "@mantine/form";
 import axios from "axios";
+import { useAtom } from "jotai";
+import { sessionDataAtom } from "../../context";
 import formatApiUrl from "../../utilities/format-api-url";
 import isObjectEmpty from "../../utilities/is-object-empty";
 import useTrackedMutation from "../../hooks/useTrackedMutation";
@@ -15,6 +17,8 @@ const logIn = async (credentials) => {
 };
 
 export default ({ setIsLoading, setRequestError, setValidationError }) => {
+    const [_, setSessionData] = useAtom(sessionDataAtom);
+
     const form = useForm({
         initialValues: {
             username: "",
@@ -33,8 +37,10 @@ export default ({ setIsLoading, setRequestError, setValidationError }) => {
     }
 
     const handleSuccess = (data) => {
-        localStorage.setItem("username", data.username);
-        localStorage.setItem("token", data.token);
+      setSessionData({
+        username: data.username,
+        token: data.token,
+      });
     };
 
     const mutation = useTrackedMutation(

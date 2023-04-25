@@ -36,41 +36,41 @@ router.use(validateSessionMiddleware);
 router.post("/getUserEvents", async (req, res) => {
     const { username } = req.body;
 
-    getUserEvents(username)
-        .then((events) => res.json(events))
-        .catch((error) => res.status(400).send(error));
+    const events = await getUserEvents(username);
+
+    res.json(events);
 });
 
-router.post("/getEventById", (req, res) => {
+router.post("/getEventById", async (req, res) => {
     const { id } = req.body;
 
-    getEventById(id)
-        .then((event) => res.json(event))
-        .catch((error) => res.status(400).send(error));
+    const event = await getEventById(id);
+
+    res.json(event);
 });
 
-router.post("/storeEvent", (req, res) => {
+router.post("/storeEvent", async (req, res) => {
     const { username, ...event } = req.body;
 
-    storeEvent(username, event)
-        .then(() => res.sendStatus(200))
-        .catch((error) => res.status(400).send(error));
+    await storeEvent(username, event);
+
+    res.json(event);
 });
 
-router.post("/updateEvent", (req, res) => {
+router.post("/updateEvent", async (req, res) => {
     const { id, ...event } = req.body;
 
-    updateEvent(id, event)
-        .then(() => res.sendStatus(200))
-        .catch((error) => res.status(400).send(error));
+    await updateEvent(id, event);
+
+    res.json({});
 });
 
-router.post("/deleteEvent", (req, res) => {
+router.post("/deleteEvent", async (req, res) => {
     const { id } = req.body;
 
-    deleteEvent(id)
-        .then(() => res.sendStatus(200))
-        .catch((error) => res.status(400).send(error));
+    await deleteEvent(id);
+
+    res.json({});
 });
 
 module.exports = router;

@@ -11,9 +11,10 @@ const middleware = async (req, res, next) => {
 
     if (!(await isAuthenticationTokenValid(token))) {
         res.status(400).send("Invalid authentication token");
+        console.log("Received request with invalid authentication token");
+    } else {
+      next();
     }
-
-    next();
 };
 
 module.exports = middleware;

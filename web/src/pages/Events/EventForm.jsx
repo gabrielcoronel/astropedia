@@ -7,6 +7,7 @@ import useTrackedMutation from "../../hooks/useTrackedMutation";
 import { useQueryClient } from "react-query";
 import axios from "axios";
 import formatApiUrl from "../../utilities/format-api-url";
+import readSessionData from "../../utilities/read-session-data";
 
 const layouts = {
     form: {
@@ -49,12 +50,11 @@ const layouts = {
 };
 
 const storeEvent = (event) => {
-    const authenticationToken = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
+    const { username, token } = readSessionData();
     const url = formatApiUrl("/events/storeEvent");
     const promise = axios.post(url, { ...event, username }, {
         headers: {
-            Authorization: authenticationToken
+            Authorization: token
         }
     });
 
@@ -75,7 +75,7 @@ export default ({ onSubmit, setIsLoading, setRequestError }) => {
 
     const handleSubmit = (values) => {
         mutation.mutate(values);
-        queryClient.refetchQueries();
+        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         form.reset();
         onSubmit();
     };
