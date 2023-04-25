@@ -10,7 +10,10 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
+// Se crea un cliente global para todas las peticiones de la aplicación
 const queryClient = new QueryClient();
+
+// Se crea el nodo donde se va renderizar la aplicación
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(

@@ -9,6 +9,7 @@ import axios from "axios";
 import formatApiUrl from "../../utilities/format-api-url";
 import readSessionData from "../../utilities/read-session-data";
 
+// Estilos del los varios componentes
 const layouts = {
     form: {
         display: "flex",
@@ -49,9 +50,15 @@ const layouts = {
     }
 };
 
+// Consume la API para almacenar un evento en la base de datos
 const storeEvent = (event) => {
+    // Lee los datos de la sesión actual
     const { username, token } = readSessionData();
+
+    // Formatea la URL en la cual hacer la solicitud
     const url = formatApiUrl("/events/storeEvent");
+
+    // Se hace la petición
     const promise = axios.post(url, { ...event, username }, {
         headers: {
             Authorization: token
@@ -62,6 +69,7 @@ const storeEvent = (event) => {
 };
 
 export default ({ onSubmit, setIsLoading, setRequestError }) => {
+    // Se usa una conveniencia para menejar los datos del formulario
     const form = useForm({
         initialValues: {
             title: "",
@@ -70,12 +78,14 @@ export default ({ onSubmit, setIsLoading, setRequestError }) => {
             date: null
         }
     });
-    const mutation = useTrackedMutation(storeEvent, setIsLoading, setRequestError);
-    const queryClient = useQueryClient();
 
+    // Se inicializa la mutación a realizar
+    const mutation = useTrackedMutation(storeEvent, setIsLoading, setRequestError);
+
+    // Handler para cuando se sube el formulario
     const handleSubmit = (values) => {
+        // Se inicialiaa la mutación
         mutation.mutate(values);
-        queryClient.invalidateQueries({ queryKey: ["allEvents"] });
         form.reset();
         onSubmit();
     };

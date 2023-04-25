@@ -1,3 +1,4 @@
+// Estilos compartidos entre los componentes de autenticación
 export default {
     width: "100%",
     display: "flex",
