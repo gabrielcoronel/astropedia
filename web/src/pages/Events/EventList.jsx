@@ -22,6 +22,7 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import { useState } from "react";
 
+// Estilos de los varios componentes de este archivo
 const layouts = {
     tile: {
         width: "40%",
@@ -73,22 +74,31 @@ const layouts = {
     }
 };
 
+// Obtiene los eventos astronomicos de un usuario mediante la API
 const getUserEvents = async () => {
+  // Lee la información de la sesión actual
     const { username, token } = readSessionData();
+  // Formatea la URL de la API
     const url = formatApiUrl("/events/getUserEvents");
+  // Realiza la consulta
     const response = await axios.post(url, { username }, {
         headers: {
             Authorization: token
         }
     });
+  // Lee los datos de respuesta
     const data = response.data;
 
     return data;
 };
 
+// Elimina un evento astronomico mediante la API
 const deleteEvent = (id) => {
+  // Se lee el token de autenticación de los datos de la sesión actual
     const { token } = readSessionData();
+  // Se formatea la URL de la API
     const url = formatApiUrl("/events/deleteEvent");
+  // Se realiza la consulta
     const promise = axios.post(url, { id }, {
         headers: {
             Authorization: token
@@ -98,13 +108,19 @@ const deleteEvent = (id) => {
     return promise;
 };
 
+// Componente para un evento astronomico individual
 const EventTile = ({ setIsLoading, setRequestError, event }) => {
+  // Se leen los datos del evento
     const { title, description, pictures, date } = event;
+  // Mutación para eliminar el evento en cuestión
     const mutation = useTrackedMutation(deleteEvent, setIsLoading, setRequestError);
 
+  // Handler para cuando se borra el evento
     const handleDelete = () => {
+      // Se lee el identificador del evento
         const id = event._id;
 
+      // Se realiza la mutación
         mutation.mutate(id);
     };
 
@@ -144,10 +160,15 @@ const EventTile = ({ setIsLoading, setRequestError, event }) => {
     );
 };
 
+// Componente para mostrar una lista de todos los
+// componentes del usuario
 const EventList = ({ setIsLoading, setRequestError }) => {
+  // Consulta de todos los eventos
     const query = useQuery("allEvents", getUserEvents);
 
+  // Si hay un error
     if (query.isError) {
+      // Se le notifica al componente padre
         setRequestError(query.error);
         return;
     }
@@ -174,13 +195,20 @@ const EventList = ({ setIsLoading, setRequestError }) => {
     );
 };
 
+// Envoltoria de la lista para manejar todo el estado
 export default () => {
+  // Estado booleano de si se muestra el modal
     const [showStoreForm, setShowStoreForm] = useState(false);
+  // Estado de carga
     const [isLoading, setIsLoading] = useState(false);
+  // Esto del último error de solicitud
     const [requestError, setRequestError] = useState(null);
+  // Estado global de la sesión de datos global
     const [_, setSessionData] = useAtom(sessionDataAtom);
 
+  // Handler para cerrar sesión
     const logOut = () => {
+      // Se convierten los datos de la sesión actual en nulos
       setSessionData(null);
     };
 

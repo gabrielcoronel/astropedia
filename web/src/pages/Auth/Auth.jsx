@@ -12,12 +12,17 @@ import { Close } from "@mui/icons-material";
 import LogIn from "./LogIn";
 import SignUp from "./SignUp";
 
+// Formatea un mensaje de error conveniente
 const formatErrorMessage = (requestError, validationError) => {
+  // Si hay error de validación
     if (validationError !== null) {
+      // Se accede al mensaje de error
         const message = Object.entries(validationError)[0][1];
 
         return message;
     } else if (requestError !== null) {
+      // Si hay error en la solicitud
+      // Se formatea condicionalmente
         switch (requestError.response.data) {
             case "INVALID_CREDENTIALS":
                 return "Las credenciales son incorrectas"
@@ -26,6 +31,7 @@ const formatErrorMessage = (requestError, validationError) => {
         }
     }
 
+  // Si no hay error, no se produce un mensaje
     return null;
 };
 
@@ -49,14 +55,17 @@ const ErrorBox = ({ open, setOpen, message }) => {
 };
 
 const FormBox = ({ setIsLoading, setRequestError, setValidationError }) => {
+  // Estado del indice actual de la pestaña
     const [index, setIndex] = useState(0);
 
+  // Estilo del contenedor del componente
     const layout = {
         width: "40%",
         paddingBottom: "1.5rem",
         border: "1px silver solid"
     };
 
+  // Lista de pestañas
     const tabs = [
         <SignUp
             setIsLoading={setIsLoading}
@@ -88,12 +97,17 @@ const FormBox = ({ setIsLoading, setRequestError, setValidationError }) => {
 };
 
 export default () => {
+  // Estado de carga
     const [isLoading, setIsLoading] = useState(false);
+  // Estado del error de solicitud actual
     const [requestError, setRequestError] = useState(null);
+  // Estado del error de validación actual
     const [validationError, setValidationError] = useState(null);
 
+  // Se formatea el error actual
     const errorMessage = formatErrorMessage(requestError, validationError);
 
+  // Estilo del contenedor del componente
     const layout = {
         width: "100hh",
         height: "100vh",
